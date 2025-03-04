@@ -36,6 +36,8 @@ const incomeSchema = new mongoose.Schema({
 	}
 })
 
+module.exports = mongoose.model('Income', incomeSchema);
+
 const outcomeSchema = new mongoose.Schema({
 	date: {
 		required: true,
@@ -90,3 +92,4 @@ const outcomeSchema = new mongoose.Schema({
 		type: String
 	}
 })
+module.exports = mongoose.model('Outcome', outcomeSchema);
