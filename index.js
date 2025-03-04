@@ -3,25 +3,47 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
-const port = process.env.PORT || 3001;
-
 const routes = require('./routes/routes');
 
-mongoose.connect(mongoString);
-const database = mongoose.connection;
-
-database.on('error', (error) => {
-    console.log(error)
-})
-
-database.once('connected', () => {
-    console.log('Database Connected');
-})
 const app = express();
 
 app.use(express.json());
-app.use('/api', routes)
-app.listen(port, () => {
-    console.log(`Server Started at ${port}`)
-})
+app.use('/api', routes);
 
+const connectDB = async () => {
+    try {
+        await mongoose.connect(mongoString);
+        console.log('Database Connected');
+        return true;
+    } catch (error) {
+        console.error('Database connection error:', error.message);
+        return false;
+    }
+};
+
+const startServer = async () => {
+    const port = process.env.PORT || 3001;
+
+    if (require.main === module) {
+        const connected = await connectDB();
+
+        if (connected) {
+            const server = app.listen(port, () => {
+                console.log(`Server Started at ${port}`);
+            });
+
+            server.on('error', (error) => {
+                if (error.code === 'EADDRINUSE') {
+                    console.error(`Port ${port} is already in use`);
+                    process.exit(1);
+                } else {
+                    console.error('Server error:', error.message);
+                }
+            });
+        }
+    }
+};
+
+startServer();
+
+module.exports = { app, connectDB };
