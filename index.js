@@ -4,11 +4,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
 const routes = require('./routes/routes');
-
+const incomeRoutes = require('./routes/incomeRoutes');
+const outcomeRoutes = require('./routes/outcomeRoutes');
 const app = express();
 
 app.use(express.json());
+// TODO
 app.use('/api', routes);
+app.use('/api/income', incomeRoutes);
+app.use('/api/outcome', outcomeRoutes);
 
 const connectDB = async () => {
     try {

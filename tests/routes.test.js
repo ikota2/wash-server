@@ -33,8 +33,8 @@ describe('API Routes', () => {
 
 	test('POST /api/post - create a new', async () => {
 		const res = await request(testServer)
-		.post(API_ENDPOINTS.POST)
-		.send({name: 'John Doe', age: 30});
+			.post(API_ENDPOINTS.POST)
+			.send({name: 'John Doe', age: 30});
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toHaveProperty('_id');
@@ -48,8 +48,8 @@ describe('API Routes', () => {
 
 	test('POST /api/post - error if there are not required fields', async () => {
 		const res = await request(testServer)
-		.post(API_ENDPOINTS.POST)
-		.send({});
+			.post(API_ENDPOINTS.POST)
+			.send({});
 
 		expect(res.statusCode).toBe(400);
 		expect(res.body).toHaveProperty('message');
@@ -58,8 +58,8 @@ describe('API Routes', () => {
 
 	test('POST /api/post - error if with only name field', async () => {
 		const res = await request(testServer)
-		.post(API_ENDPOINTS.POST)
-		.send({name: 'Only Name'});
+			.post(API_ENDPOINTS.POST)
+			.send({name: 'Only Name'});
 
 		expect(res.statusCode).toBe(400);
 		expect(res.body).toHaveProperty('message');
@@ -68,8 +68,8 @@ describe('API Routes', () => {
 
 	test('POST /api/post - error if only age field', async () => {
 		const res = await request(testServer)
-		.post(API_ENDPOINTS.POST)
-		.send({age: 25});
+			.post(API_ENDPOINTS.POST)
+			.send({age: 25});
 
 		expect(res.statusCode).toBe(400);
 		expect(res.body).toHaveProperty('message');
@@ -77,7 +77,8 @@ describe('API Routes', () => {
 	});
 
 	test('GET /api/getAll', async () => {
-		const res = await request(testServer).get(API_ENDPOINTS.GET_ALL);
+		const res = await request(testServer)
+			.get(API_ENDPOINTS.GET_ALL);
 
 		expect(res.statusCode).toBe(200);
 		expect(Array.isArray(res.body)).toBeTruthy();
@@ -91,7 +92,8 @@ describe('API Routes', () => {
 	});
 
 	test('GET /api/getOne/:id', async () => {
-		const res = await request(testServer).get(API_ENDPOINTS.GET_ONE(id));
+		const res = await request(testServer)
+			.get(API_ENDPOINTS.GET_ONE(id));
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toHaveProperty('_id', id);
@@ -100,7 +102,8 @@ describe('API Routes', () => {
 
 	test('GET /api/getOne/:id - error with invalid ID', async () => {
 		const invalidId = 'invalid-id-format';
-		const res = await request(testServer).get(API_ENDPOINTS.GET_ONE(invalidId));
+		const res = await request(testServer)
+			.get(API_ENDPOINTS.GET_ONE(invalidId));
 
 		expect(res.statusCode).toBe(500);
 		expect(res.body).toHaveProperty('message');
@@ -108,7 +111,8 @@ describe('API Routes', () => {
 
 	test('GET /api/getOne/:id - not found with non-existent ID', async () => {
 		const nonExistentId = new mongoose.Types.ObjectId();
-		const res = await request(testServer).get(API_ENDPOINTS.GET_ONE(nonExistentId));
+		const res = await request(testServer)
+			.get(API_ENDPOINTS.GET_ONE(nonExistentId));
 
 		if (res.statusCode === 404) {
 			expect(res.body).toHaveProperty('message');
@@ -120,8 +124,8 @@ describe('API Routes', () => {
 
 	test('PATCH /api/update/:id - обновление записи', async () => {
 		const res = await request(testServer)
-		.patch(API_ENDPOINTS.UPDATE(id))
-		.send({name: 'John Dillinger'});
+			.patch(API_ENDPOINTS.UPDATE(id))
+			.send({name: 'John Dillinger'});
 
 		expect(res.statusCode).toBe(200);
 		expect(res.body).toHaveProperty('_id', id);
@@ -133,8 +137,8 @@ describe('API Routes', () => {
 	test('PATCH /api/update/:id - error with invalid ID', async () => {
 		const invalidId = 'invalid-id';
 		const res = await request(testServer)
-		.patch(API_ENDPOINTS.UPDATE(invalidId))
-		.send({name: 'Sara Jessica Parker'});
+			.patch(API_ENDPOINTS.UPDATE(invalidId))
+			.send({name: 'Sara Jessica Parker'});
 
 		expect(res.statusCode).toBe(400);
 		expect(res.body).toHaveProperty('message');
@@ -143,8 +147,8 @@ describe('API Routes', () => {
 	test('PATCH /api/update/:id - not found with non-existent ID', async () => {
 		const nonExistentId = new mongoose.Types.ObjectId();
 		const res = await request(testServer)
-		.patch(API_ENDPOINTS.UPDATE(nonExistentId))
-		.send({name: 'Sara Jessica Parker'});
+			.patch(API_ENDPOINTS.UPDATE(nonExistentId))
+			.send({name: 'Sara Jessica Parker'});
 
 		expect([404, 400, 200]).toContain(res.statusCode);
 
@@ -154,18 +158,21 @@ describe('API Routes', () => {
 	});
 
 	test('DELETE /api/delete/:id', async () => {
-		const res = await request(testServer).delete(API_ENDPOINTS.DELETE(id));
+		const res = await request(testServer)
+		.delete(API_ENDPOINTS.DELETE(id));
 
 		expect(res.statusCode).toBe(200);
 		expect(res.text).toContain('has been deleted');
 
-		const checkRes = await request(testServer).get(API_ENDPOINTS.GET_ONE(id));
+		const checkRes = await request(testServer)
+			.get(API_ENDPOINTS.GET_ONE(id));
 		expect(checkRes.body).toBe(null);
 	});
 
 	test('DELETE /api/delete/:id - error with invalid ID', async () => {
 		const invalidId = 'invalid-id';
-		const res = await request(testServer).delete(API_ENDPOINTS.DELETE(invalidId));
+		const res = await request(testServer)
+			.delete(API_ENDPOINTS.DELETE(invalidId));
 
 		expect(res.statusCode).toBe(400);
 		expect(res.body).toHaveProperty('message');
@@ -173,7 +180,8 @@ describe('API Routes', () => {
 
 	test('DELETE /api/delete/:id - not found with non-existent ID', async () => {
 		const nonExistentId = new mongoose.Types.ObjectId();
-		const res = await request(testServer).delete(API_ENDPOINTS.DELETE(nonExistentId));
+		const res = await request(testServer)
+			.delete(API_ENDPOINTS.DELETE(nonExistentId));
 
 		if (res.statusCode === 404) {
 			expect(res.body).toHaveProperty('message');
