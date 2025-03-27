@@ -2,15 +2,31 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const mongoString = process.env.DATABASE_URL;
-const routes = require('./routes/routes');
+const cors = require('cors');
 const incomeRoutes = require('./routes/incomeRoutes');
 const outcomeRoutes = require('./routes/outcomeRoutes');
+const { seedUsers, login } = require('./utils/authUtils');
+
 const app = express();
+const mongoString = process.env.DATABASE_URL;
+
+app.use(cors({
+    origin: ['http://localhost:5174', 'http://localhost:3000'],
+    credentials: true
+}));
 
 app.use(express.json());
-// TODO
-app.use('/api', routes);
+
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body
+        const result = await login(username, password)
+        res.json(result)
+    } catch (error) {
+        res.status(401).json({ message: (error).message })
+    }
+})
+
 app.use('/api/income', incomeRoutes);
 app.use('/api/outcome', outcomeRoutes);
 
@@ -32,6 +48,7 @@ const startServer = async () => {
         const connected = await connectDB();
 
         if (connected) {
+            await seedUsers();
             const server = app.listen(port, () => {
                 console.log(`Server Started at ${port}`);
             });

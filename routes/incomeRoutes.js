@@ -1,83 +1,10 @@
-// it works, but error numbers are wrong
-
-// const express = require('express');
-// const router = express.Router();
-// const Income = require('../models/incomeModel');
-//
-// router.post('/post', async (req, res) => {
-// 	const data = new Income({
-// 		cash_in: req.body.cash_in,
-// 		cash_out: req.body.cash_out,
-// 		app: req.body.app,
-// 		cp: req.body.cp,
-// 		date: req.body.date
-// 	})
-//
-// 	try {
-// 		const dataToSave = await data.save();
-// 		res.status(200).json(dataToSave);
-// 	} catch (error) {
-// 		res.status(400).json({ message: error.message });
-// 	}
-// });
-//
-// router.get('/getAll', async (req, res) => {
-// 	try {
-// 		const data = await Income.find();
-// 		res.json(data);
-// 	} catch (error) {
-// 		res.status(500).json({ message: error.message });
-// 	}
-// });
-//
-// router.get('/getOne/:id', async (req, res) => {
-// 	try {
-// 		const data = await Income.findById(req.params.id);
-// 		res.json(data);
-// 	} catch (error) {
-// 		res.status(500).json({ message: error.message });
-// 	}
-// });
-//
-// router.patch('/update/:id', async (req, res) => {
-// 	try {
-// 		const id = req.params.id;
-// 		const updatedData = req.body;
-// 		const options = { new: true };
-//
-// 		const result = await Income.findByIdAndUpdate(
-// 			id, updatedData, options
-// 		);
-//
-// 		res.send(result);
-// 	} catch (error) {
-// 		res.status(400).json({ message: error.message });
-// 	}
-// });
-//
-// // TODO LOL
-// router.delete('/delete/:id', async (req, res) => {
-// 	try {
-// 		const id = req.params.id;
-// 		const data = await Income.findByIdAndDelete(id);
-// 		res.send(`Document from ${data.date} was removed`);
-// 	} catch (error) {
-// 		res.status(400).json({ message: error.message });
-// 	}
-// });
-//
-// module.exports = router;
-
-
-
-// it has to work, but I haven't checked it
-
 const express = require('express');
 const router = express.Router();
 const Income = require('../models/incomeModel');
 const { getErrorStatusCode, createErrorResponse } = require('../utils/errorCodes');
+const { authenticateToken } = require('../utils/authUtils');
 
-router.post('/post', async (req, res) => {
+router.post('/post', authenticateToken(['admin']), async (req, res) => {
 	const data = new Income({
 		cash_in: req.body.cash_in,
 		cash_out: req.body.cash_out,
@@ -96,7 +23,7 @@ router.post('/post', async (req, res) => {
 	}
 });
 
-router.get('/getAll', async (req, res) => {
+router.get('/getAll', authenticateToken(['admin', 'user']), async (req, res) => {
 	try {
 		const data = await Income.find();
 		res.status(200).json(data);
@@ -106,7 +33,7 @@ router.get('/getAll', async (req, res) => {
 	}
 });
 
-router.get('/getOne/:id', async (req, res) => {
+router.get('/getOne/:id', authenticateToken(['admin', 'user']), async (req, res) => {
 	try {
 		const data = await Income.findById(req.params.id);
 
@@ -124,7 +51,7 @@ router.get('/getOne/:id', async (req, res) => {
 	}
 });
 
-router.patch('/update/:id', async (req, res) => {
+router.patch('/update/:id', authenticateToken(['admin']), async (req, res) => {
 	try {
 		const id = req.params.id;
 		const updatedData = req.body;
@@ -146,7 +73,7 @@ router.patch('/update/:id', async (req, res) => {
 	}
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', authenticateToken(['admin']), async (req, res) => {
 	try {
 		const id = req.params.id;
 		const data = await Income.findByIdAndDelete(id);
