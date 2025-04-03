@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const incomeSchema = new mongoose.Schema({
-	cash_in: {
-		required: true,
-		type: String,
-	},
-	cash_out: {
+	cash: {
 		required: true,
 		type: String,
 	},
