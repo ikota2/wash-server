@@ -6,8 +6,7 @@ const { authenticateToken } = require('../utils/authUtils');
 
 router.post('/post', authenticateToken(['admin']), async (req, res) => {
 	const data = new Income({
-		cash_in: req.body.cash_in,
-		cash_out: req.body.cash_out,
+		cash_in: req.body.cash,
 		app: req.body.app,
 		cp: req.body.cp,
 		date: req.body.date
